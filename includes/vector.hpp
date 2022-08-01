@@ -23,10 +23,17 @@ namespace ft
 		typedef		ft::RandomAccessIterator<T>						const_iterator;
 		typedef		ft::reverse_iterator<iterator>					reverse_iterator;
 		typedef		ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+		typedef					std::size_t							size_type;
+		
+		private:
+			pointer 			_container;
+			size_t				_container_size; //to size_type partout
+			size_t				_container_length; //to size_type partout
+			allocator_type		_alloc;
+			//value_type*			_container;
 		//typedef		typename RandomAccessIterator::difference_type	difference_type;
 		
-		typedef					std::size_t							size_type;
-
+		public :
 		explicit vector(const allocator_type &allocator = allocator_type()) : _container(0), _container_size(0), _container_length(0) , _alloc(allocator)
 		{
 			_container = _alloc.allocate(0);
@@ -73,17 +80,17 @@ namespace ft
 		bool empty (void) const{ return (_container_size == 0);}
 		void reserve(size_t n)
 		{
-			if (n > _alloc.max_size())
-				throw std::length_error("ft::vector::reserve : n > max_size");
+			// if (n > _alloc.max_size())
+			// 	throw std::length_error("ft::vector::reserve : n > max_size");
 			if (n > _container_size)
 			{
 				size_t i = -1;
 				pointer	tmp;
 				tmp  = _alloc.allocate(n);
-				_container_size = n;
 				while (++i < _container_length)
 					tmp[i] = _container[i];
 				_alloc.deallocate(_container, _container_size);
+				_container_size = n;
 				_container = tmp;
 			}
 		};
@@ -256,11 +263,5 @@ namespace ft
 		};
 		template <class InputIterator>
 		allocator_type get_allocator (void) const { return (allocator_type()); }
-		private:
-			size_t				_container_size; //to size_type partout
-			size_t				_container_length; //to size_type partout
-			allocator_type		_alloc;
-			pointer 			_container;
-			//value_type*			_container;
 	};
 };
