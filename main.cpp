@@ -21,9 +21,9 @@ int main() {
 	std::cout << "\nvector3 = ";
 
 	// ranged loop
-	for (int i : vector3) {
-	  std::cout << i << "  ";
-	}
+	//for (int i : vector3) {
+	//  std::cout << i << "  ";
+	//}
 	std::cout << std::endl;
 	std::cout << "hey" << std::endl;
 	return 0;
