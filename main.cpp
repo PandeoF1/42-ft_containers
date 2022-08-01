@@ -3,6 +3,11 @@
 int main() {
 	// method 3
 	ft::vector<int> vector3(5, 12);
+	std::cout<< vector3[0] << std::endl;
+	std::cout<< vector3[1] << std::endl;
+	std::cout<< vector3[2] << std::endl;
+	std::cout<< vector3[3] << std::endl;
+	//std::cout<< vector3.begin() << std::endl;
 	std::cout << "a" << std::endl;
 	ft::vector<std::string> vector4(5, "hello");
 	std::cout << "b" << std::endl;

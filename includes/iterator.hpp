@@ -47,7 +47,7 @@ namespace ft
 		protected:
 			T* _ptr;
 		public:
-			RandomAccessIterator(void)	{ _ptr = nullptr; }
+			RandomAccessIterator(void)	{ _ptr = 0; }
 			RandomAccessIterator(T* ptr)	{ _ptr = ptr; }
 			RandomAccessIterator(const RandomAccessIterator &othr)	{ *this = othr; }
 			~RandomAccessIterator(void)	{}

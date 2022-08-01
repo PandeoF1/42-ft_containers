@@ -27,33 +27,33 @@ namespace ft
 		
 		typedef					std::size_t							size_type;
 
-		explicit vector(const allocator_type &allocator = allocator_type()) : _container_length(0), _container_size(0), _container(nullptr), _alloc(allocator)
+		explicit vector(const allocator_type &allocator = allocator_type()) : _container(0), _container_size(0), _container_length(0) , _alloc(allocator)
 		{
 			_container = _alloc.allocate(0);
-		}
-		explicit vector(size_type n, const_reference val = value_type(), const allocator_type &allocator = allocator_type()) : _container_length(0), _container_size(0), _container(0), _alloc(allocator)
-		{
-			_container = _alloc.allocate(0);
-			assign(n, val);
 		}
 		template <class InputIterator>
-		vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type()) : _container_length(0), _container_size(0), _container(0), _alloc(allocator)
+		vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type()) : _container(0), _container_size(0), _container_length(0) ,_alloc(allocator)
 		{
 			_container = _alloc.allocate(0);
 			assign(first, last);
 		}
-		vector(const vector &othr): _container_length(0), _container_size(0), _container(0), _alloc(othr._allocator)	{ *this = othr; }
+		explicit vector(size_type n, const_reference val = value_type(), const allocator_type &allocator = allocator_type()) : _container(0) , _container_size(0), _container_length(0) , _alloc(allocator)
+		{
+			_container = _alloc.allocate(0);
+			assign(n, val);
+		}
+		vector(const vector &othr): _container(0), _container_size(0), _container_length(0), _alloc(othr._allocator)  	{ *this = othr; }
 		~vector (void) { _alloc.deallocate(_container, _container_size);}
 
 		// Iterator
-		iterator begin (void)				{ return (iterator(_vct)); }
-		iterator end (void)					{ return (iterator(_vct + _container_size)); }
-		const_iterator begin(void) const	{ return (const_iterator(_vct));}
-		const_iterator end (void) const		{ return (const_iterator(_vct + _container_size));}
-		const_reverse_iterator rbegin (void) const { return (const_reverse_iterator(_vct + _container_size - 1)); }
-		const_reverse_iterator rend (void) const { return (const_reverse_iterator(_vct - 1)); }
-		reverse_iterator rbegin (void) { return (reverse_iterator(_vct + _container_size - 1)); }
-		reverse_iterator rend (void) { return (reverse_iterator(_vct - 1)); }
+		iterator begin (void)				{ return (iterator(_container)); }
+		iterator end (void)					{ return (iterator(_container + _container_size)); }
+		const_iterator begin(void) const	{ return (const_iterator(_container));}
+		const_iterator end (void) const		{ return (const_iterator(_container + _container_size));}
+		const_reverse_iterator rbegin (void) const { return (const_reverse_iterator(_container + _container_size - 1)); }
+		const_reverse_iterator rend (void) const { return (const_reverse_iterator(_container - 1)); }
+		reverse_iterator rbegin (void) { return (reverse_iterator(_container + _container_size - 1)); }
+		reverse_iterator rend (void) { return (reverse_iterator(_container - 1)); }
 
 		// Capacity
 		size_t	size (void) const { return (_container_size); }
@@ -88,21 +88,21 @@ namespace ft
 			}
 		};
 		// Member access
-		reference operator[] (size_t n) { return (*(_vct + n)); }
+		reference operator[] (size_t n) { return (_container[n]); }
 		reference at (size_t n)
 		{
 			if (n >= _container_size)
 				throw std::out_of_range("vector");
-			return (_vct[n]);
+			return (_container[n]);
 		}
 		reference front (void)
 		{
-			return (_vct[0]);
+			return (_container[0]);
 		}
 		
 		reference back (void)
 		{
-			return (_vct[_container_size - 1]);
+			return (_container[_container_size - 1]);
 		}
 
 		// Modifiers
@@ -160,7 +160,7 @@ namespace ft
 		// {
 		// 	size_t		off = position - this->begin();
 		// 	this->insert(position, 1, val);
-		// 	return (iterator(_vct + off));
+		// 	return (iterator(_container + off));
 		// }
 		// void insert (iterator position, size_type n, const value_type & val)
 		// {
@@ -175,11 +175,11 @@ namespace ft
 		// 			this->reserve(1);
 		// 	}
 		// 	for (size_type i = 0 ; i < n ; i++)
-		// 		_alloc.construct(_vct + _container_length + i, val);
+		// 		_alloc.construct(_container + _container_length + i, val);
 		// 	for (int i = _container_length - 1 ; i >= 0 && i >= (int)off ; i--)
-		// 		_vct[i + n] = _vct[i];
+		// 		_container[i + n] = _container[i];
 		// 	for (size_type i = off ; i < off + n ; i++)
-		// 		_vct[i] = val;
+		// 		_container[i] = val;
 		// 	_container_length = _container_length + n;
 		// }
 		iterator insert(iterator position, const value_type &value)
@@ -188,9 +188,11 @@ namespace ft
 			iterator it = begin();
 			while (it + i != position && i < _container_length)
 				i++;
+			//std::cout << "i = " << i << std::endl;
 			if (_container_size < _container_length + 1)
 				reserve(_container_length + 1);
 			size_type j = _container_size - 1;
+			//std::cout << "j = " << j << std::endl;
 			while (j > i)
 			{
 				_container[j] = _container[j - 1];
@@ -210,7 +212,9 @@ namespace ft
 		{
 			while (begin != end)
 			{
-				position = insert(position, *begin) + 1;
+				//std::cout << "insert : " << begin[0] << std::endl;
+				//std::cout << "insert : " << begin << std::endl;
+				position = insert(position, begin) + 1;
 				++begin;
 			}
 		};
@@ -257,6 +261,6 @@ namespace ft
 			size_t				_container_length; //to size_type partout
 			allocator_type		_alloc;
 			pointer 			_container;
-			value_type*			_vct;
+			//value_type*			_container;
 	};
 };
