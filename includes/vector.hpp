@@ -23,7 +23,8 @@ namespace ft
 		typedef		ft::RandomAccessIterator<T>						const_iterator;
 		typedef		ft::reverse_iterator<iterator>					reverse_iterator;
 		typedef		ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-		typedef					std::size_t							size_type;
+		typedef		std::size_t										size_type;
+		typedef 	long int                                    	difference_type;
 		
 		private:
 			pointer 			_container;
@@ -54,12 +55,12 @@ namespace ft
 
 		// Iterator
 		iterator begin (void)				{ return (iterator(_container)); }
-		iterator end (void)					{ return (iterator(_container + _container_size)); }
+		iterator end (void)					{ return (iterator(_container + _container_length)); }
 		const_iterator begin(void) const	{ return (const_iterator(_container));}
-		const_iterator end (void) const		{ return (const_iterator(_container + _container_size));}
-		const_reverse_iterator rbegin (void) const { return (const_reverse_iterator(_container + _container_size - 1)); }
+		const_iterator end (void) const		{ return (const_iterator(_container + _container_length));}
+		const_reverse_iterator rbegin (void) const { return (const_reverse_iterator(_container + _container_length - 1)); }
 		const_reverse_iterator rend (void) const { return (const_reverse_iterator(_container - 1)); }
-		reverse_iterator rbegin (void) { return (reverse_iterator(_container + _container_size - 1)); }
+		reverse_iterator rbegin (void) { return (reverse_iterator(_container +_container_length - 1)); }
 		reverse_iterator rend (void) { return (reverse_iterator(_container - 1)); }
 
 		// Capacity
@@ -89,7 +90,7 @@ namespace ft
 				tmp  = _alloc.allocate(n);
 				while (++i < _container_length)
 					tmp[i] = _container[i];
-				_alloc.deallocate(_container, _container_size);
+				_alloc.deallocate(_container, _container_size );
 				_container_size = n;
 				_container = tmp;
 			}
@@ -144,102 +145,115 @@ namespace ft
 			}
 			return (iterator(first));
 		};
-		//iterator insert(iterator pos, const value_type &val)
-		//{
-		//	size_t i = 0;
-		//	iterator it = begin();
-		//	while (it + i != pos && i < _container_length)
-		//		i++;
-		//	if (_container_size < _container_length + 1)
-		//		reserve(_container_length + 1);
-		//	size_t j = _container_size - 1;
-		//	while (j > i)
-		//	{
-		//		_container[j] = _container[j - 1];
-		//		j--;
-		//	}
-		//	_container[i] = val;
-		//	_container_length++;
-		//	return (iterator(&_container[i]));
-		//};
-
-		// iterator insert (iterator position, const value_type & val)
+		// iterator insert(iterator position, const value_type &value)
 		// {
-		// 	size_t		off = position - this->begin();
-		// 	this->insert(position, 1, val);
-		// 	return (iterator(_container + off));
-		// }
-		// void insert (iterator position, size_type n, const value_type & val)
-		// {
-		// 	size_t		off = position - this->begin();
-		// 	if (_container_length + n > _container_size)
+		// 	size_type i = 0;
+		// 	iterator it = begin();
+		// 	while (it + i != position && i < _container_length)
+		// 		i++;
+		// 	// std::cout << "i = " << i << std::endl;
+		// 	// -std::cout << "_container_size = " << _container_size << std::endl;
+		// 	if (_container_size < _container_length + 1)
+		// 		reserve(_container_length + 1);
+		// 	size_type j = _container_size - 1;
+		// 	// std::cout << "j = " << j << std::endl;
+		// 	// std::cout << "_container_size = " << _container_size << std::endl;
+		// 	// std::cout << "_container_length = " << _container_length << std::endl;
+		// 	while (j > i)
 		// 	{
-		// 		if (_container_length + n > SIZE_OR_CAP_ * 2)
-		// 			this->reserve(_container_length + n);
-		// 		else if (SIZE_OR_CAP_ > 0)
-		// 			this->reserve(SIZE_OR_CAP_ * 2);
-		// 		else
-		// 			this->reserve(1);
+		// 		//std::cout << _container[0] << std::endl;
+		// 		_container[j] = _container[j - 1];
+		// 		//std::cout << _container[j] << std::endl;
+		// 		j--;
 		// 	}
-		// 	for (size_type i = 0 ; i < n ; i++)
-		// 		_alloc.construct(_container + _container_length + i, val);
-		// 	for (int i = _container_length - 1 ; i >= 0 && i >= (int)off ; i--)
-		// 		_container[i + n] = _container[i];
-		// 	for (size_type i = off ; i < off + n ; i++)
-		// 		_container[i] = val;
-		// 	_container_length = _container_length + n;
-		// }
-		iterator insert(iterator position, const value_type &value)
-		{
-			size_type i = 0;
-			iterator it = begin();
-			while (it + i != position && i < _container_length)
-				i++;
-			//std::cout << "i = " << i << std::endl;
-			if (_container_size < _container_length + 1)
-				reserve(_container_length + 1);
-			size_type j = _container_size - 1;
-			//std::cout << "j = " << j << std::endl;
-			while (j > i)
+		// 	_container[i] = value;
+		// 	_container_length++;
+		// 	return (iterator(&_container[i]));
+		// };
+		// void insert(iterator position, size_type n, const value_type &value)
+		// {
+		// 	while (n--)
+		// 	{
+		// 		// std::cout << "insert " << n << std::endl;
+		// 		position = insert(position, value);
+		// 	}
+		// };
+		// template <class InputIterator>
+		// void insert(iterator position, InputIterator begin, InputIterator end)
+		// {
+		// 	while (begin != end)
+		// 	{
+		// 		//std::cout << "insert : " << begin[0] << std::endl;
+		// 		//std::cout << "insert : " << begin << std::endl;
+		// 		position = insert(position, begin) + 1;
+		// 		++begin;
+		// 	}
+		// };
+		iterator insert (iterator position, const value_type& val)
+        {
+            difference_type index = position - begin();
+            
+            insert(position, 1, val);
+            return iterator(&_container[index]);
+        }
+        void insert (iterator position, size_type n, const value_type& val)
+        {
+            difference_type index = position - begin();
+            
+            if (_container_length + n > _container_size)
+                reserve(_container_length + n);
+            
+            iterator newPosition(&_container[index]);
+            
+			size_type tn = n;
+			difference_type temp = index;
+			while (tn)
 			{
-				_container[j] = _container[j - 1];
-				j--;
+				_container[temp + n] = _container[temp];
+				temp++;
+				tn--;
 			}
-			_container[i] = value;
-			_container_length++;
-			return (iterator(&_container[i]));
-		};
-		void insert(iterator position, size_type n, const value_type &value)
-		{
-			while (n--)
-				position = insert(position, value);
-		};
-		template <class InputIterator>
-		void insert(iterator position, InputIterator begin, InputIterator end)
-		{
-			while (begin != end)
+            
+            // Constructing n new elements from val
+            for (size_type i = 0; i < n; ++i)
 			{
-				//std::cout << "insert : " << begin[0] << std::endl;
-				//std::cout << "insert : " << begin << std::endl;
-				position = insert(position, begin) + 1;
-				++begin;
+				_container[index + i] = val;
+				std::cout << "insert : " << val << std::endl;
 			}
-		};
+            _container_length += n;
+		}
+        template <class InputIterator>
+        void insert (iterator position, InputIterator first, InputIterator last, 
+        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+        {
+            size_type n = 0;
+            InputIterator tmp(first);
+            while (tmp++ != last)
+                ++n;
+            
+            difference_type index = position - begin();
+            
+            if (_container_length + n > _container_size)
+                reserve(_container_length + n);
 
-		//void insert(iterator pos, size_t n, const value_type &val)
-		//{
-		//	while (n--)
-		//		pos = insert(pos, val);
-		//};
-		//template <class InputIterator>
-		//void insert(iterator pos, InputIterator first, InputIterator last)
-		//{
-		//	while (first != last)
-		//	{
-		//		pos = insert(pos, *first) + 1; // a voir pour le +1
-		//		++first;
-		//	}
-		//};
+            iterator newPosition(&_container[index]);
+            
+			size_type tn = n;
+			difference_type temp = index;
+            // if (newPosition != end())
+            //     moveElementsToTheRight(newPosition, n);
+			while (tn)
+			{
+				//_container[temp + n] = _container[temp];
+				//std::cout << "temp = " << *temp << std::endl;
+				
+				temp++;
+				tn--;
+			}
+            for (size_type i = 0; i < n; ++i)
+                _alloc.construct(&(*newPosition++), *first++);
+            _container_length += n;
+        }
 		void swap (vector &othr)
 		{
 			ft::swap(_container, othr._container);
@@ -250,17 +264,49 @@ namespace ft
 		{
 			erase(begin(), end());
 		};
+		// template <class InputIterator>
+		// void assign(InputIterator first, InputIterator last)
+		// {
+		// 	clear();
+		// 	insert(begin(), first, last);
+		// };
+		// void assign(size_type n, const value_type &value)
+		// {
+		// 	clear();
+		// 	insert(begin(), n, value);
+		// };
 		template <class InputIterator>
-		void assign(InputIterator first, InputIterator last)
-		{
-			clear();
-			insert(begin(), first, last);
-		};
-		void assign(size_type n, const value_type &value)
-		{
-			clear();
-			insert(begin(), n, value);
-		};
+        void assign (InputIterator first, InputIterator last,
+        typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+        {
+            clear();
+            size_type n = static_cast<size_type>(last - first);
+            // if (n > _container_size)
+            // {
+                _alloc.deallocate(_container, _container_size);
+                _container = _alloc.allocate(n);
+				_container_size = n;
+            // }
+            
+            size_type i = 0;
+            for (; first != last; ++i, ++first)
+               _container[i] = *first;
+            _container_length = i;
+        }  
+        void assign (size_type n, const value_type& val)
+        {
+            clear();
+            // if (n > _container_size)
+            // {
+                _alloc.deallocate(_container, _container_size);
+                _container = _alloc.allocate(n);
+				_container_size = n;
+			// }
+            
+            for (size_type i = 0; i < n; ++i)
+                _container[i] = val;
+            _container_length = n;
+        }
 		template <class InputIterator>
 		allocator_type get_allocator (void) const { return (allocator_type()); }
 	};

@@ -5,9 +5,9 @@ namespace ft
 {
 	template<class it>
 	class reverse_iterator{
-		public:
-			it	_it;
 		private:
+			it	_it;
+		public:
 			reverse_iterator	(void)												{ _it = it(); }
 			reverse_iterator	(typename it::value_type * ptr)						{ _it = it(ptr); }
 			reverse_iterator	(const it & x)										{ _it = x; --_it; }
@@ -22,7 +22,12 @@ namespace ft
 			reverse_iterator	operator++(int)												{ reverse_iterator<it> x(*this); --_it; return (x); }
 			reverse_iterator	operator--(int)												{ reverse_iterator<it> x(*this); ++_it; return (x); }
 
-			std::ptrdiff_t		operator-	(const reverse_iterator & x) const				{ return (x.getIt() - _it); }
+			long int		operator-	(const reverse_iterator& x) const				{ return (x._it - this->_it); }
+			friend reverse_iterator operator-(int nb, const reverse_iterator& othr)
+            {
+                reverse_iterator newIt(othr);
+                return (newIt -= nb);
+            }
 
 			template <class U> bool	operator==(const reverse_iterator<U> & x) const			{ return (_it == x.getIt()); }
 			template <class U> bool	operator!=(const reverse_iterator<U> & x) const			{ return (_it != x.getIt()); }
@@ -30,7 +35,7 @@ namespace ft
 			template <class U> bool	operator>(const reverse_iterator<U> & x) const			{ return (_it < x.getIt()); }
 			template <class U> bool	operator<=(const reverse_iterator<U> & x) const			{ return (_it >= x.getIt()); }
 			template <class U> bool	operator>=(const reverse_iterator<U> & x) const			{ return (_it <= x.getIt()); }
-			friend reverse_iterator	operator+	(int n, const reverse_iterator & x)		{ return (x.getIt() - n + 1); }
+			friend reverse_iterator	operator+	(int n, const reverse_iterator & x)		{ return (x.getIt() - n); }
 
 			reverse_iterator	operator+(int n) const										{ return (_it - n + 1); }
 			reverse_iterator	operator-(int n) const										{ return (_it + n + 1); }
@@ -40,6 +45,7 @@ namespace ft
 			typename it::value_type *	operator->(void) const							{ return (&(*_it)); }
 
 			it	base(void)						{ return (++it(_it)); }
+
 	};
 
 	template<class T>
@@ -136,6 +142,11 @@ namespace ft
 			T &operator[](int n)
 			{
 				return (_ptr[n]);
+			}
+
+			long int operator-(const RandomAccessIterator &othr) const
+			{
+				return (_ptr - othr._ptr);
 			}
 			
 	};
